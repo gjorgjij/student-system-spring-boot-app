@@ -12,6 +12,8 @@ public interface StudentService {
 
     StudentDto getByEmail(String email);
 
+    StudentDto getByHash(String hash);
+
     List<StudentDto> getAll();
 
     void save(StudentDto studentDto) throws Exception;

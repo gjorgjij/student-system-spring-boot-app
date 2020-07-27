@@ -28,6 +28,11 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
+    public StudentDto getByHash(String hash) {
+        return studentRepository.getByHash(hash);
+    }
+
+    @Override
     public List<StudentDto> getAll() {
         return (List<StudentDto>) studentDao.getAll();
     }

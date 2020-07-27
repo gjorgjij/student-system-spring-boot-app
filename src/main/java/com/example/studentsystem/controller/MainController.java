@@ -95,11 +95,11 @@ public class MainController {
      */
     @GetMapping(path = "/courses/all")
     public @ResponseBody
-    Iterable<CourseDto> getAllCourses(@RequestHeader String hash) {
+    Object getAllCourses(@RequestHeader String hash) {
         if (authenticate(hash)) {
             return courseService.getAll();
         }
-        return null;
+        return "Permission not allowed";
     }
 
     /**
@@ -110,11 +110,11 @@ public class MainController {
      */
     @GetMapping(path = "/courses/{name}")
     public @ResponseBody
-    CourseDto getByName(@RequestHeader String hash, @PathVariable String name) {
+    Object getByName(@RequestHeader String hash, @PathVariable String name) {
         if (authenticate(hash)) {
             return courseService.getByName(name);
         }
-        return null;
+        return "Permission not allowed";
     }
 
     /**
@@ -146,7 +146,7 @@ public class MainController {
                 return "Student with id:" + student_id + " already enrolled in course with id:" + course_id;
             }
         }
-        return null;
+        return "Permission not allowed";
     }
 
     /**
@@ -169,7 +169,7 @@ public class MainController {
                 return "Successfully cancelled enrollment for student with id:" + student_id;
             }
         }
-        return null;
+        return "Permission not allowed";
     }
 
     /**
@@ -195,11 +195,9 @@ public class MainController {
     }
 
     private Boolean authenticate(String hash) {
-        List<StudentDto> students = studentService.getAll();
-        for (StudentDto student : students) {
-            if (student.getHash().equals(hash)) {
-                return true;
-            }
+        StudentDto student = studentService.getByHash(hash);
+        if(student != null){
+            return true;
         }
         return false;
     }

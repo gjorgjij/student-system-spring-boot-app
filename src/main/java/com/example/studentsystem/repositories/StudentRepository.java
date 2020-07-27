@@ -7,4 +7,7 @@ import org.springframework.data.repository.CrudRepository;
 public interface StudentRepository extends CrudRepository<StudentDto, Integer> {
     @Query("SELECT s FROM StudentDto s WHERE s.email=:email")
     StudentDto getByEmail(String email);
+
+    @Query("SELECT s FROM StudentDto s WHERE s.hash=:hash")
+    StudentDto getByHash(String hash);
 }
