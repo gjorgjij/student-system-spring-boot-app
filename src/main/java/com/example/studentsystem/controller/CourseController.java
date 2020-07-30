@@ -8,10 +8,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Component;
 
 @Controller
 @RequestMapping(path = "/demo")
+@Component
 public class CourseController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
 
     @Autowired
     private StudentService studentService;
@@ -31,7 +36,9 @@ public class CourseController {
         if (authenticate(hash)) {
             return courseService.getByName(name);
         }
-        return "Permission not allowed";
+        LOGGER.error("Permission not allowed");
+
+        return null;
     }
 
     /**
@@ -40,7 +47,7 @@ public class CourseController {
      * @param name
      * @return
      */
-    @PostMapping(path = "/courses/add")
+    @PostMapping(path = "/courses")
     public @ResponseBody
     String addNewCourse(@RequestParam String name) {
         CourseDto course = courseService.getByName(name);
@@ -63,7 +70,7 @@ public class CourseController {
      *
      * @return
      */
-    @GetMapping(path = "/courses/all")
+    @GetMapping(path = "/courses")
     public @ResponseBody
     Object getAllCourses(@RequestHeader String hash) {
         if (authenticate(hash)) {
@@ -71,6 +78,7 @@ public class CourseController {
         }
         return "Permission not allowed";
     }
+
     private Boolean authenticate(String hash) {
         StudentDto student = studentService.getByHash(hash);
         return student != null;

@@ -32,7 +32,7 @@ public class EnrollmentController {
      * @param course_id
      * @return
      */
-    @PostMapping(path = "/enrollments/add")
+    @PostMapping(path = "/enrollments")
     public @ResponseBody
     String addNewEnrollment(@RequestHeader String hash, @RequestParam int student_id, @RequestParam int course_id) {
 
@@ -64,7 +64,7 @@ public class EnrollmentController {
      * @param course_id
      * @return
      */
-    @PostMapping(path = "/enrollments/cancel")
+    @PostMapping(path = "/cancelEnrollments")
     public @ResponseBody
     String cancelEnrollment(@RequestHeader String hash, @RequestParam int student_id, @RequestParam int course_id) throws NotFoundException {
 
@@ -85,7 +85,7 @@ public class EnrollmentController {
      *
      * @return
      */
-    @GetMapping(path = "/enrollments/all")
+    @GetMapping(path = "/enrollments")
     public @ResponseBody
     Iterable<EnrollmentDto> getAllEnrollments() {
         return enrollmentService.getAll();

@@ -4,7 +4,11 @@ import com.example.studentsystem.dto.StudentDto;
 import com.example.studentsystem.services.CourseService;
 import com.example.studentsystem.services.EnrollmentService;
 import com.example.studentsystem.services.StudentService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,8 +18,11 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
 @Controller
+@Component
 @RequestMapping(path = "/demo")
 public class StudentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(StudentController.class);
+
     @Autowired
     private StudentService studentService;
 
@@ -32,7 +39,7 @@ public class StudentController {
      * @param email
      * @return
      */
-    @PostMapping(path = "/students/add")
+    @PostMapping(path = "/students")
     public @ResponseBody
     String addNewStudent(@RequestParam String name
             , @RequestParam String email) {
@@ -44,6 +51,7 @@ public class StudentController {
             student.setHash(sha256(email));
             try {
                 studentService.save(student);
+
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -54,7 +62,7 @@ public class StudentController {
 
     }
 
-    @GetMapping(path = "/students/all")
+    @GetMapping(path = "/students")
     public @ResponseBody
     Iterable<StudentDto> getAllUsers() {
         return studentService.getAll();
