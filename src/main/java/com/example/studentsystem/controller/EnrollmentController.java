@@ -1,6 +1,5 @@
 package com.example.studentsystem.controller;
 
-import com.example.studentsystem.dto.CourseDto;
 import com.example.studentsystem.dto.EnrollmentDto;
 import com.example.studentsystem.dto.StudentDto;
 import com.example.studentsystem.services.CourseService;
@@ -15,107 +14,16 @@ import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
-import java.util.List;
 
 @Controller
 @RequestMapping(path = "/demo")
-public class MainController {
-    @Autowired
-    private StudentService studentService;
-
-    @Autowired
-    private CourseService courseService;
+public class EnrollmentController {
 
     @Autowired
     private EnrollmentService enrollmentService;
 
-    /**
-     * Users/Students
-     *
-     * @param name
-     * @param email
-     * @return
-     */
-    @PostMapping(path = "/students/add")
-    public @ResponseBody
-    String addNewStudent(@RequestParam String name
-            , @RequestParam String email) {
-        StudentDto student = studentService.getByEmail(email);
-        if (student == null) {
-            student = new StudentDto();
-            student.setName(name);
-            student.setEmail(email);
-            student.setHash(sha256(email));
-            try {
-                studentService.save(student);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "Student Saved";
-        } else {
-            return "Student exists";
-        }
-
-    }
-
-    @GetMapping(path = "/students/all")
-    public @ResponseBody
-    Iterable<StudentDto> getAllUsers() {
-        return studentService.getAll();
-    }
-
-    /**
-     * Add new course
-     *
-     * @param name
-     * @return
-     */
-    @PostMapping(path = "/courses/add")
-    public @ResponseBody
-    String addNewCourse(@RequestParam String name) {
-        CourseDto course = courseService.getByName(name);
-        if (course == null) {
-            course = new CourseDto();
-            course.setName(name);
-            try {
-                courseService.save(course);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "Course successfully created!";
-        } else {
-            return "Course already exists";
-        }
-    }
-
-    /**
-     * Return all courses
-     *
-     * @return
-     */
-    @GetMapping(path = "/courses/all")
-    public @ResponseBody
-    Object getAllCourses(@RequestHeader String hash) {
-        if (authenticate(hash)) {
-            return courseService.getAll();
-        }
-        return "Permission not allowed";
-    }
-
-    /**
-     * Return course by name
-     *
-     * @param name
-     * @return
-     */
-    @GetMapping(path = "/courses/{name}")
-    public @ResponseBody
-    Object getByName(@RequestHeader String hash, @PathVariable String name) {
-        if (authenticate(hash)) {
-            return courseService.getByName(name);
-        }
-        return "Permission not allowed";
-    }
+    @Autowired
+    private StudentService studentService;
 
     /**
      * Add enrollment
@@ -202,4 +110,3 @@ public class MainController {
         return false;
     }
 }
-
