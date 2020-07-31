@@ -2,11 +2,8 @@ package com.example.studentsystem.controller;
 
 import com.example.studentsystem.dto.EnrollmentDto;
 import com.example.studentsystem.dto.StudentDto;
-import com.example.studentsystem.services.CourseService;
 import com.example.studentsystem.services.EnrollmentService;
 import com.example.studentsystem.services.StudentService;
-import javassist.NotFoundException;
-import org.apache.coyote.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,9 +35,9 @@ public class EnrollmentController {
     public ResponseEntity<String> addNewEnrollment(@RequestHeader String hash, @Valid @RequestBody EnrollmentDto enrollmentDto) {
 
         if (authenticate(hash)) {
-            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudent_id(), enrollmentDto.getCourse_id());
+            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudentId(), enrollmentDto.getCourseId());
             if (enrollment != null) {
-                return new ResponseEntity<String>("Student {" + enrollmentDto.getStudent_id() + "} already enrolled", HttpStatus.CONFLICT);
+                return new ResponseEntity<String>("Student {" + enrollmentDto.getStudentId() + "} already enrolled", HttpStatus.CONFLICT);
             }
             try {
                 Integer enrollmentId = enrollmentService.save(enrollmentDto);
@@ -57,12 +54,12 @@ public class EnrollmentController {
     @PostMapping(path = "/cancel")
     public ResponseEntity<String> cancelEnrollment(@RequestHeader String hash, @RequestBody EnrollmentDto enrollmentDto) {
         if (authenticate(hash)) {
-            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudent_id(), enrollmentDto.getCourse_id());
+            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudentId(), enrollmentDto.getCourseId());
             if (enrollment != null) {
                 enrollmentService.delete(enrollment);
                 return new ResponseEntity<>(HttpStatus.OK);
             }
-            LOGGER.info("Student with id: " + enrollmentDto.getStudent_id() + " not found.");
+            LOGGER.info("Student with id: " + enrollmentDto.getStudentId() + " not found.");
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
 

@@ -1,7 +1,6 @@
 package com.example.studentsystem.dto;
 
 import javax.persistence.*;
-import javax.validation.constraints.NotBlank;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name="enrollment")
@@ -11,8 +10,8 @@ public class EnrollmentDto {
     @Column(name="id")
     private Integer id;
 
-    private int course_id;
-    private int student_id;
+    private int courseId;
+    private int studentId;
 
 //    @ManyToOne
 //    @JoinColumn(name = "student_id")
@@ -30,20 +29,20 @@ public class EnrollmentDto {
         this.id = id;
     }
 
-    public int getCourse_id() {
-        return course_id;
+    public int getCourseId() {
+        return courseId;
     }
 
-    public void setCourse_id(int course_id) {
-        this.course_id = course_id;
+    public void setCourseId(int course_id) {
+        this.courseId = course_id;
     }
 
-    public int getStudent_id() {
-        return student_id;
+    public int getStudentId() {
+        return studentId;
     }
 
-    public void setStudent_id(int student_id) {
-        this.student_id = student_id;
+    public void setStudentId(int student_id) {
+        this.studentId = student_id;
     }
 
     @Override

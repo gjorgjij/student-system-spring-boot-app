@@ -17,7 +17,7 @@ public class CourseDto {
     private String name;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "course_id", referencedColumnName = "id")
+    @JoinColumn(name = "courseId", referencedColumnName = "id")
     private List<EnrollmentDto> enrollments;
 
     public Integer getId() {

@@ -24,7 +24,7 @@ public class StudentDto {
     private String hash;
 
     @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "student_id", referencedColumnName = "id")
+    @JoinColumn(name = "studentId", referencedColumnName = "id")
     private List<EnrollmentDto> enrollments;
 
     public Integer getId() {
