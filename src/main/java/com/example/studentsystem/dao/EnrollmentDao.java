@@ -24,8 +24,8 @@ public class EnrollmentDao implements Dao<EnrollmentDto> {
     }
 
     @Override
-    public void save(EnrollmentDto enrollmentDto) {
-        enrollmentRepository.save(enrollmentDto);
+    public EnrollmentDto save(EnrollmentDto enrollmentDto) {
+        return enrollmentRepository.save(enrollmentDto);
     }
 
     @Override

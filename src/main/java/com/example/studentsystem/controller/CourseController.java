@@ -5,6 +5,8 @@ import com.example.studentsystem.dto.StudentDto;
 import com.example.studentsystem.services.CourseService;
 import com.example.studentsystem.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,9 +14,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-@Controller
-@RequestMapping(path = "/demo")
+import javax.validation.Valid;
+
 @Component
+@Controller
+@RequestMapping(path = "/courses")
 public class CourseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
 
@@ -24,59 +28,49 @@ public class CourseController {
     @Autowired
     private CourseService courseService;
 
-    /**
-     * Return course by name
-     *
-     * @param name
-     * @return
-     */
-    @GetMapping(path = "/courses/{name}")
-    public @ResponseBody
-    Object getByName(@RequestHeader String hash, @PathVariable String name) {
+    @GetMapping(path = "/{name}")
+    public ResponseEntity<String> getByName(@RequestHeader String hash, @Valid @PathVariable String name) {
         if (authenticate(hash)) {
-            return courseService.getByName(name);
-        }
-        LOGGER.error("Permission not allowed");
-
-        return null;
-    }
-
-    /**
-     * Add new course
-     *
-     * @param name
-     * @return
-     */
-    @PostMapping(path = "/courses")
-    public @ResponseBody
-    String addNewCourse(@RequestParam String name) {
-        CourseDto course = courseService.getByName(name);
-        if (course == null) {
-            course = new CourseDto();
-            course.setName(name);
             try {
-                courseService.save(course);
+                Integer courseId = courseService.getByName(name).getId();
+                return new ResponseEntity<String>(courseId.toString(), HttpStatus.OK);
             } catch (Exception e) {
-                e.printStackTrace();
+                LOGGER.error("Error found: {}", e.getMessage(), e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
-            return "Course successfully created!";
-        } else {
-            return "Course already exists";
         }
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    /**
-     * Return all courses
-     *
-     * @return
-     */
-    @GetMapping(path = "/courses")
-    public @ResponseBody
-    Object getAllCourses(@RequestHeader String hash) {
-        if (authenticate(hash)) {
-            return courseService.getAll();
+    @PostMapping
+    public ResponseEntity<String> addNewCourse(@Valid @RequestBody CourseDto courseDto) {
+        CourseDto course = courseService.getByName(courseDto.getName());
+        if (course != null) {
+            return new ResponseEntity<String>("Course already exists", HttpStatus.CONFLICT);
         }
-        return "Permission not allowed";
+        try {
+            Integer courseId = courseService.save(courseDto);
+            return new ResponseEntity<String>(courseId.toString(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<String>("Failed saving", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+    }
+
+    @GetMapping
+    public ResponseEntity<Iterable<CourseDto>> getAllCourses(@RequestHeader String hash) {
+        if (authenticate(hash)) {
+            try {
+                return new ResponseEntity<Iterable<CourseDto>>(courseService.getAll(), HttpStatus.OK);
+            } catch (Exception e) {
+                LOGGER.error("Error found: {}", e.getMessage(), e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     private Boolean authenticate(String hash) {

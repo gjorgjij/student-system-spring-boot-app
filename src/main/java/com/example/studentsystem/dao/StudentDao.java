@@ -24,8 +24,8 @@ public class StudentDao implements Dao<StudentDto> {
     }
 
     @Override
-    public void save(StudentDto studentDto) {
-        studentRepository.save(studentDto);
+    public StudentDto save(StudentDto studentDto) {
+        return studentRepository.save(studentDto);
     }
 
     @Override

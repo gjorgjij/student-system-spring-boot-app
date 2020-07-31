@@ -10,7 +10,7 @@ public interface Dao<T> {
     Collection<T> getAll();
 //    CourseDto getByName(String name);
 
-    void save(T t);
+    T save(T t);
     void update(T t);
     void delete(T t);
 }

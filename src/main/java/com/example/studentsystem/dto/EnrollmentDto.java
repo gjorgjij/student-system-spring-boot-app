@@ -1,6 +1,7 @@
 package com.example.studentsystem.dto;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 
 @Entity // This tells Hibernate to make a table out of this class
 @Table(name="enrollment")

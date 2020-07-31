@@ -23,8 +23,8 @@ public class CourseDao implements Dao<CourseDto> {
     }
 
     @Override
-    public void save(CourseDto courseDto) {
-        courseRepository.save(courseDto);
+    public CourseDto save(CourseDto courseDto) {
+        return courseRepository.save(courseDto);
     }
 
     @Override

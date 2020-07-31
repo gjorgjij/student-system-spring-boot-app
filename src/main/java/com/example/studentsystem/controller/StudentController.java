@@ -4,68 +4,56 @@ import com.example.studentsystem.dto.StudentDto;
 import com.example.studentsystem.services.CourseService;
 import com.example.studentsystem.services.EnrollmentService;
 import com.example.studentsystem.services.StudentService;
+import org.hibernate.DuplicateMappingException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
-@Controller
 @Component
-@RequestMapping(path = "/demo")
+@Controller
+@RequestMapping(path = "/students")
 public class StudentController {
     private static final Logger LOGGER = LoggerFactory.getLogger(StudentController.class);
 
     @Autowired
     private StudentService studentService;
 
-    @Autowired
-    private CourseService courseService;
+    @PostMapping
+    public ResponseEntity<String> addNewStudent(@Valid @RequestBody StudentDto studentDto) throws DuplicateMappingException {
+        StudentDto student = studentService.getByEmail(studentDto.getEmail());
+        if (student != null) {
+            return new ResponseEntity<String>("Created", HttpStatus.CREATED);
+        }
 
-    @Autowired
-    private EnrollmentService enrollmentService;
-
-    /**
-     * Users/Students
-     *
-     * @param name
-     * @param email
-     * @return
-     */
-    @PostMapping(path = "/students")
-    public @ResponseBody
-    String addNewStudent(@RequestParam String name
-            , @RequestParam String email) {
-        StudentDto student = studentService.getByEmail(email);
-        if (student == null) {
-            student = new StudentDto();
-            student.setName(name);
-            student.setEmail(email);
-            student.setHash(sha256(email));
-            try {
-                studentService.save(student);
-
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return "Student Saved";
-        } else {
-            return "Student exists";
+        try {
+            Integer studentId = studentService.save(studentDto);
+            return new ResponseEntity<String>(studentId.toString(), HttpStatus.CREATED);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<String>("Failed saving", HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
     }
 
-    @GetMapping(path = "/students")
-    public @ResponseBody
-    Iterable<StudentDto> getAllUsers() {
-        return studentService.getAll();
+    @GetMapping
+    public ResponseEntity<Iterable<StudentDto>> getAllStudents() {
+        try {
+            return new ResponseEntity<>(studentService.getAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String sha256(String email) {

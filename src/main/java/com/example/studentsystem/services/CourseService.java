@@ -14,7 +14,7 @@ public interface CourseService {
 
     List<CourseDto> getAll();
 
-    void save(CourseDto courseDto) throws Exception;
+    Integer save(CourseDto courseDto) throws Exception;
 
     List<EnrollmentDto> fetchStudentsByCourseName(String name);
 

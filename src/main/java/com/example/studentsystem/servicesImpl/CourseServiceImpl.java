@@ -35,8 +35,8 @@ public class CourseServiceImpl implements CourseService {
     }
 
     @Override
-    public void save(CourseDto courseDto) throws Exception {
-        courseDao.save(courseDto);
+    public Integer save(CourseDto courseDto) throws Exception {
+        return courseDao.save(courseDto).getId();
     }
 
     @Override

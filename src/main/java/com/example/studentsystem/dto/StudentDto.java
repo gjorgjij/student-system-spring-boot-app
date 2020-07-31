@@ -1,6 +1,7 @@
 package com.example.studentsystem.dto;
 
 import javax.persistence.*;
+import javax.validation.constraints.NotBlank;
 import java.util.List;
 
 @Entity // This tells Hibernate to make a table out of this class
@@ -11,9 +12,11 @@ public class StudentDto {
     @Column(name = "id")
     private Integer id;
 
+    @NotBlank(message = "Name is mandatory")
     @Column(name = "name")
     private String name;
 
+    @NotBlank(message = "Email is mandatory")
     @Column(name = "email")
     private String email;
 

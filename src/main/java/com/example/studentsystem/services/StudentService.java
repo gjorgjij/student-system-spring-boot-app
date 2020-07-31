@@ -16,6 +16,6 @@ public interface StudentService {
 
     List<StudentDto> getAll();
 
-    void save(StudentDto studentDto) throws Exception;
+    Integer save(StudentDto studentDto) throws Exception;
 
 }

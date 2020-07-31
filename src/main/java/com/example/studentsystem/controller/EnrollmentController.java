@@ -6,18 +6,27 @@ import com.example.studentsystem.services.CourseService;
 import com.example.studentsystem.services.EnrollmentService;
 import com.example.studentsystem.services.StudentService;
 import javassist.NotFoundException;
+import org.apache.coyote.Response;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 
+@Component
 @Controller
-@RequestMapping(path = "/demo")
+@RequestMapping(path = "/enrollments")
 public class EnrollmentController {
+    private static final Logger LOGGER = LoggerFactory.getLogger(EnrollmentController.class);
 
     @Autowired
     private EnrollmentService enrollmentService;
@@ -25,70 +34,49 @@ public class EnrollmentController {
     @Autowired
     private StudentService studentService;
 
-    /**
-     * Add enrollment
-     *
-     * @param student_id
-     * @param course_id
-     * @return
-     */
-    @PostMapping(path = "/enrollments")
-    public @ResponseBody
-    String addNewEnrollment(@RequestHeader String hash, @RequestParam int student_id, @RequestParam int course_id) {
-
-        EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(student_id, course_id);
+    @PostMapping
+    public ResponseEntity<String> addNewEnrollment(@RequestHeader String hash, @Valid @RequestBody EnrollmentDto enrollmentDto) {
 
         if (authenticate(hash)) {
-            if (enrollment == null) {
-                enrollment = new EnrollmentDto();
-                enrollment.setStudent_id(student_id);
-                enrollment.setCourse_id(course_id);
-                try {
-                    enrollmentService.save(enrollment);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-                return "Student with id:" + student_id + " successfully enrolled in course with id:" + course_id;
-
-            } else {
-                return "Student with id:" + student_id + " already enrolled in course with id:" + course_id;
+            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudent_id(), enrollmentDto.getCourse_id());
+            if (enrollment != null) {
+                return new ResponseEntity<String>("Student {" + enrollmentDto.getStudent_id() + "} already enrolled", HttpStatus.CONFLICT);
+            }
+            try {
+                Integer enrollmentId = enrollmentService.save(enrollmentDto);
+                return new ResponseEntity<String>(enrollmentId.toString(), HttpStatus.CREATED);
+            } catch (Exception e) {
+                LOGGER.error("Error found: {}", e.getMessage(), e);
+                return new ResponseEntity<String>("Failed saving", HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
-        return "Permission not allowed";
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    /**
-     * Cancel enrollment for specific student and course
-     *
-     * @param student_id
-     * @param course_id
-     * @return
-     */
-    @PostMapping(path = "/cancelEnrollments")
-    public @ResponseBody
-    String cancelEnrollment(@RequestHeader String hash, @RequestParam int student_id, @RequestParam int course_id) throws NotFoundException {
-
-        EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(student_id, course_id);
+    @PostMapping(path = "/cancel")
+    public ResponseEntity<String> cancelEnrollment(@RequestHeader String hash, @RequestBody EnrollmentDto enrollmentDto) {
         if (authenticate(hash)) {
-            if (enrollment == null) {
-                return "Enrollment not found to be deleted";
-            } else {
+            EnrollmentDto enrollment = enrollmentService.getByStudentIdAndCourseId(enrollmentDto.getStudent_id(), enrollmentDto.getCourse_id());
+            if (enrollment != null) {
                 enrollmentService.delete(enrollment);
-                return "Successfully cancelled enrollment for student with id:" + student_id;
+                return new ResponseEntity<>(HttpStatus.OK);
             }
+            LOGGER.info("Student with id: " + enrollmentDto.getStudent_id() + " not found.");
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
-        return "Permission not allowed";
+
+        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
-    /**
-     * Return all enrollments
-     *
-     * @return
-     */
-    @GetMapping(path = "/enrollments")
-    public @ResponseBody
-    Iterable<EnrollmentDto> getAllEnrollments() {
-        return enrollmentService.getAll();
+    @GetMapping
+    public ResponseEntity<Iterable<EnrollmentDto>> getAllEnrollments() {
+        try {
+            return new ResponseEntity<>(enrollmentService.getAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     private String sha256(String email) {
@@ -104,9 +92,6 @@ public class EnrollmentController {
 
     private Boolean authenticate(String hash) {
         StudentDto student = studentService.getByHash(hash);
-        if(student != null){
-            return true;
-        }
-        return false;
+        return student != null;
     }
 }

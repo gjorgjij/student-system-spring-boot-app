@@ -34,8 +34,8 @@ public class EnrollmentServiceImpl implements EnrollmentService {
     }
 
     @Override
-    public void save(EnrollmentDto enrollmentDto) throws Exception {
-        enrollmentDao.save(enrollmentDto);
+    public Integer save(EnrollmentDto enrollmentDto) throws Exception {
+        return enrollmentDao.save(enrollmentDto).getId();
     }
 
     @Override

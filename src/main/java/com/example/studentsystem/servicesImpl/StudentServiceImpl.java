@@ -38,8 +38,8 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public void save(StudentDto studentDto) throws Exception {
-        studentDao.save(studentDto);
+    public Integer save(StudentDto studentDto) throws Exception {
+        return studentDao.save(studentDto).getId();
     }
 
 }

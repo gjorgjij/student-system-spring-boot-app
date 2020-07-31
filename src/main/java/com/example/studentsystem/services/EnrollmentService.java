@@ -2,7 +2,6 @@ package com.example.studentsystem.services;
 
 import com.example.studentsystem.dto.EnrollmentDto;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,7 +13,7 @@ public interface EnrollmentService {
 
     List<EnrollmentDto> getAll();
 
-    void save(EnrollmentDto enrollmentDto) throws Exception;
+    Integer save(EnrollmentDto enrollmentDto) throws Exception;
 
     void delete(EnrollmentDto enrollmentDto);
 }
