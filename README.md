@@ -12,49 +12,49 @@
   - POST Body req[name, email]:
 
 ```
-http://localhost:8080/demo/students/add
+http://localhost:8080/students
 ```
 **List Students**
   - GET
 
 ```
-http://localhost:8080/demo/students/all
+http://localhost:8080/students
 ```
 **Add a Course**
   - POST Body req[name]:
 
 ```
-http://localhost:8080/demo/courses/add
+http://localhost:8080/courses
 ```
 **List Courses**
   - GET Headers[hash]:
 
 ```
-http://localhost:8080/demo/courses/all
+http://localhost:8080/courses
 ```
 **Get Course by name**
   - GET Headers[hash], replace "History" with course name:
 
 ```
-http://localhost:8080/demo/courses/History
+http://localhost:8080/courses
 ```
 **Enroll in**
   - POST Headers[hash], Body[student_id, course_id]:
 
 ```
-http://localhost:8080/demo/enrollments/add
+http://localhost:8080/enrollments
 ```
 **Cancel enrollment**
   - POST Headers[hash], Body[student_id, course_id]:
 
 ```
-http://localhost:8080/demo/enrollments/cancel
+http://localhost:8080/enrollments/cancel
 ```
 **List enrollments**
   - GET:
 
 ```
-http://localhost:8080/demo/enrollments/all
+http://localhost:8080/enrollments
 ```
 
 
