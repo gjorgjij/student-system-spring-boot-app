@@ -61,7 +61,7 @@ public class StudentController {
         try {
             md = MessageDigest.getInstance("SHA-256");
         } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         byte[] hash = md.digest(email.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(hash);
