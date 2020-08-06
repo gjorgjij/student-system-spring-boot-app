@@ -30,17 +30,14 @@ public class CourseController {
 
     @GetMapping(path = "/{name}")
     public ResponseEntity<String> getByName(@RequestHeader String hash, @Valid @PathVariable String name) {
-        if (authenticate(hash)) {
-            try {
-                Integer courseId = courseService.getByName(name).getId();
-                return new ResponseEntity<String>(courseId.toString(), HttpStatus.OK);
-            } catch (Exception e) {
-                LOGGER.error("Error found: {}", e.getMessage(), e);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+        try {
+            Integer courseId = courseService.getByName(name).getId();
+            return new ResponseEntity<String>(courseId.toString(), HttpStatus.OK);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     @PostMapping
@@ -60,17 +57,14 @@ public class CourseController {
     }
 
     @GetMapping
-    public ResponseEntity<Iterable<CourseDto>> getAllCourses(@RequestHeader String hash) {
-        if (authenticate(hash)) {
-            try {
-                return new ResponseEntity<Iterable<CourseDto>>(courseService.getAll(), HttpStatus.OK);
-            } catch (Exception e) {
-                LOGGER.error("Error found: {}", e.getMessage(), e);
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
+    public ResponseEntity<Iterable<CourseDto>> getAllCourses() {
+        try {
+            return new ResponseEntity<Iterable<CourseDto>>(courseService.getAll(), HttpStatus.OK);
+        } catch (Exception e) {
+            LOGGER.error("Error found: {}", e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-        return new ResponseEntity<>(HttpStatus.FORBIDDEN);
     }
 
     private Boolean authenticate(String hash) {

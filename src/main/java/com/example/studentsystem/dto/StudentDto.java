@@ -4,7 +4,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
 import java.util.List;
 
-@Entity // This tells Hibernate to make a table out of this class
+@Entity
 @Table(name = "student")
 public class StudentDto {
     @Id
