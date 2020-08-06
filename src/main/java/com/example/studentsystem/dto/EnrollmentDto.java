@@ -13,14 +13,6 @@ public class EnrollmentDto {
     private int courseId;
     private int studentId;
 
-//    @ManyToOne
-//    @JoinColumn(name = "student_id")
-//    private StudentDTO studentDTO;
-//
-//    @ManyToOne
-//    @JoinColumn(name="course_id")
-//    private CourseDTO courseDTO;
-
     public Integer getId() {
         return id;
     }

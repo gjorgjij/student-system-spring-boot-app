@@ -58,7 +58,6 @@ public class JwtAuthenticationController {
         if (user != null) {
             return new ResponseEntity<String>("Created", HttpStatus.CREATED);
         }
-
         try {
             Integer userId = userDetailsService.save(userDto);
             return new ResponseEntity<String>(userId.toString(), HttpStatus.CREATED);

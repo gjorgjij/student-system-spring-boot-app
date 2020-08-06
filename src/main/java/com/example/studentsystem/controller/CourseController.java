@@ -1,9 +1,7 @@
 package com.example.studentsystem.controller;
 
 import com.example.studentsystem.dto.CourseDto;
-import com.example.studentsystem.dto.StudentDto;
 import com.example.studentsystem.services.CourseService;
-import com.example.studentsystem.services.StudentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,9 +19,6 @@ import javax.validation.Valid;
 @RequestMapping(path = "/courses")
 public class CourseController {
     private static final Logger LOGGER = LoggerFactory.getLogger(CourseController.class);
-
-    @Autowired
-    private StudentService studentService;
 
     @Autowired
     private CourseService courseService;
@@ -65,10 +60,5 @@ public class CourseController {
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
 
-    }
-
-    private Boolean authenticate(String hash) {
-        StudentDto student = studentService.getByHash(hash);
-        return student != null;
     }
 }

@@ -61,7 +61,6 @@ public class JwtTokenUtil implements Serializable {
 
         String username = userDetails.getUsername();
         UserDto user = userService.getByUsername(username);
-        //todo maybe handle if user is null?
         if(user.hasRoleAdd()){
             claims.put("Role", "ADMIN");
         }

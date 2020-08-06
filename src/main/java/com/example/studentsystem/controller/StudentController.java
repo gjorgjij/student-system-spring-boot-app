@@ -1,8 +1,6 @@
 package com.example.studentsystem.controller;
 
 import com.example.studentsystem.dto.StudentDto;
-import com.example.studentsystem.services.CourseService;
-import com.example.studentsystem.services.EnrollmentService;
 import com.example.studentsystem.services.StudentService;
 import org.hibernate.DuplicateMappingException;
 import org.slf4j.Logger;
@@ -15,10 +13,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.util.Base64;
 
 @Component
 @Controller
@@ -54,17 +48,6 @@ public class StudentController {
             LOGGER.error("Error found: {}", e.getMessage(), e);
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-    }
-
-    private String sha256(String email) {
-        MessageDigest md = null;
-        try {
-            md = MessageDigest.getInstance("SHA-256");
-        } catch (NoSuchAlgorithmException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        byte[] hash = md.digest(email.getBytes(StandardCharsets.UTF_8));
-        return Base64.getEncoder().encodeToString(hash);
     }
 
 }
